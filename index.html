@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sync</title>
+    <style>
+        :root {
+            font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            font-weight: 400;
+
+            color-scheme: light dark;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            place-items: center;
+            background-color: #00111c;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                color: #213547;
+                background-color: #ffffff;
+            }
+        }
+
+        .container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            background-color: transparent;
+        }
+
+        textarea {
+            outline: none;
+            border: none;
+            padding: 2rem;
+            background-color: transparent;
+            color: #006466;
+            width: 100%;
+            margin: 0 auto;
+            font-size: 2.2rem;
+            letter-spacing: 0.2rem;
+            caret-color: #83c5be;
+            caret-shape: block;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        ::selection {
+            background: #006466;
+            color: #83c5be;
+        }
+    </style>
+</head>
+
+<body spellcheck="false">
+    <div class="container">
+        <textarea id="textarea" name="contentarea" type="text" onchange="handleInput(this.value)"></textarea>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let curr_date = Date.now();
+        const socket = io();
+
+        function handleInput(val) {
+            if (document.activeElement != document.getElementById('textarea')) return;
+            curr_date = Date.now();
+            socket.emit('text', {
+                time: curr_date,
+                content: val
+            });
+        }
+
+        socket.on('text', function (msg) {
+            console.log("recieved: ", msg)
+            console.log("current time: ", curr_date)
+            console.log("---------------------------------")
+            if (msg.time > curr_date) {
+                document.activeElement.blur()
+                console.log("change made by other user")
+                document.getElementById('textarea').value = msg.content;
+            }
+        });
+
+    </script>
+</body>
+
+</html>
