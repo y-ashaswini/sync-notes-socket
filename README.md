@@ -1,8 +1,7 @@
 # sync-notes-socket
 
-1) PREACT
-2) socket.io
-3) node.js
-4) express
+1) socket.io
+2) node.js
+3) express
 
 An app for realtime notetaking on the web.
